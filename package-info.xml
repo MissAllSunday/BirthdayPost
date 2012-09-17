@@ -22,13 +22,11 @@
 		<readme type="file" parsebbc="true">readme_smf.txt</readme>
 		<database>install.php</database><!-- this will be picked up on uninstall too if the user asks -->
 		<modification type="file" format="xml">install.xml</modification>
-		<modification type="file" format="xml">languages.xml</modification>
 	</install>
 
 	<uninstall for="2.0 - 2.0.99">
 		<code>uninstall.php</code><!-- this MUST be uninstalled -->
 		<modification type="file" format="xml" reverse="true">install.xml</modification>
-		<modification type="file" format="xml" reverse="true">languages.xml</modification>
 	</uninstall>
 
 	<upgrade from="0.9 Beta - 0.11.2 Beta">

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<name>Birthday Posts</name>
+	<id>JBlaze:BirthdayPosts</id>
+	<type>modification</type>
+	<version>0.12.1 Beta</version>
+
+	<install for="2.0 - 2.99.99, 2.0 RC3">
+		<redirect url="?action=admin;area=modsettings;sa=birthday">redirect.txt</redirect>
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<database>install.php</database><!-- this will be picked up on uninstall too if the user asks -->
+		<modification type="file" format="xml">install.xml</modification>
+		<modification type="file" format="xml">languages.xml</modification>
+	</install>
+
+	<uninstall for="2.0 - 2.99.99, 2.0 RC3">
+		<code>uninstall.php</code><!-- this MUST be uninstalled -->
+		<modification type="file" format="xml" reverse="true">install.xml</modification>
+		<modification type="file" format="xml" reverse="true">languages.xml</modification>
+	</uninstall>
+
+	<upgrade from="0.9 Beta - 0.11.2 Beta">
+		<readme type="inline">There is no upgrade for this version. Please remove the older version, then install this version.</readme>
+	</upgrade>
+
+</package-info>

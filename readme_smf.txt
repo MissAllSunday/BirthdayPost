@@ -1,11 +1,7 @@
 Thank you for downloading and installing the [b]Birthday Posts[/b] modification by JBlaze!
 
-[b]Current Version:[/b] 0.12.1 Beta
+[b]Current Version:[/b] 0.13 Beta
 
-If you ever need support, please visit http://thelulz.com/community and sign up for a free account and recieve free support!
-
-Regards,
-JBlaze
 
 [hr]
 
@@ -17,7 +13,7 @@ o = Update
 > = New Language
 ^ = Initial/New Release
 
-[tt]1/1/10 - v.0.12.1 Beta
+1/1/10 - v.0.13 Beta
 ! Fixed throwing posts for all users without dates on 1st January (sorry, stupid bug)
 ! Fixed installer not always creating new column
 
@@ -74,4 +70,4 @@ o Rewrote messy code
 o Updated settings.
 
 7/24/09 - v0.9 Beta
-^ Initial release.[/tt]
+^ Initial release.

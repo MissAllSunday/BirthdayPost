@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 	<id>JBlaze:BirthdayPosts</id>
-	<version>0.12.1 Beta</version>
+	<version>0.13 Beta</version>
 
 	<file name="$languagedir/ManageScheduledTasks.english.php">
 		<operation>

@@ -74,4 +74,3 @@ $smcFunc['db_add_column'](
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete!';
-?>

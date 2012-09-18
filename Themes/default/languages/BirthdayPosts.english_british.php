@@ -30,6 +30,7 @@ $txt['bp_board'] = 'ID of the board you wish to make the post<br /><span class="
 $txt['bp_pid'] = 'ID of the member you wish to make the post.<br /><span class="smalltext">Default is 0 which is Guest</span>';
 $txt['bp_psubject'] = 'Subject of the post<br /><span class="smalltext">Use <strong>{membername}</strong> to personalize it</span>';
 $txt['bp_pbody'] = 'The meat and gravy of the post.<br /><span class="smalltext">Use <strong>{membername}</strong> to give it a "personal" touch.</span>';
+$txt['bp_min_posts'] = 'Minimum number of posts a member must have';
 $txt['bp_increase_pc'] = 'Will these posts increase the poster\'s postcount?';
 $txt['bp_default_subject'] = 'Happy Birthday!';
 $txt['bp_default_body'] = 'Happy Birthday, {membername}!';

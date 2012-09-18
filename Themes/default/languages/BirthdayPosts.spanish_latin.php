@@ -36,6 +36,7 @@ $txt['bp_default_body'] = '&iexcl;Fel&iacute;z Cumplea&ntilde;os, {membername}!'
 $txt['bp_send_pm'] = '&iquest;Enviar un mensaje privado de notificaci&oacute;n?';
 $txt['bp_pmsubject'] = 'El asunto del mensaje privado.<br /><span class="smalltext">Puedes usar <strong>{membername}</strong> y <strong>{forumname}</strong> para personalizarlo</span>';
 $txt['bp_pmbody'] = 'El cuerpo del mensaje privado.<br /><span class="smalltext">Puedes usar <strong>{membername}</strong> y <strong>{forumname}</strong> para personalizarlo</span>';
+$txt['bp_min_posts'] = 'N&uacute;mero m&iacute;nimo de mensajes que el usuario debe de tener';
 $txt['bp_default_pmsubject'] = '&iexcl;Fel&iacute;z Cumplea&ntilde;os!';
 $txt['bp_default_pmbody'] = '&iexcl;Fel&iacute;z Cumplea&ntilde;os de parte de todo el staff de {forumname}!';
 $txt['bp_lastactive'] = '&iquest;El usuario debe de haber estado activo en los ultimos d&iacute;as?<br /><span class="smalltext">Usa 0 para deshabilitar la opci&oacute;n.</span>';

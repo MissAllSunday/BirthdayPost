@@ -51,11 +51,9 @@ function scheduled_birthday_posts()
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE bp_lastpost < {int:lastpost}
-			AND MONTH(birthdate) = {int:month}
-			AND DAYOFMONTH(birthdate) = {int:day}
-			AND birthdate > {string:nondate}
-			AND notify_announcements = {int:notify_announcements}' . (!empty($modSettings['bp_lastactive']) ? '
-			AND last_login > {int:last_login}' : '') . (!empty($modSettings['bp_minregdays']) ? '
+					AND notify_announcements = {int:notify_announcements}' . (!empty($modSettings['bp_lastactive']) ? '
+			AND last_login > {int:last_login}' : '') . (!empty($modSettings['bp_min_posts']) ? '
+			AND posts >= {int:posts}' : '') . (!empty($modSettings['bp_minregdays']) ? '
 			AND date_registered < {int:minreg}' : '') . (empty($modSettings['bp_banned']) ? '
 			AND is_activated >= 1 AND is_activated <= 10' : '
 			AND is_activated >= 1'),
@@ -67,6 +65,7 @@ function scheduled_birthday_posts()
 			'month' => $month,
 			'day' => $day,
 			'last_login' => !empty($modSettings['bp_lastactive']) ? time() - ($modSettings['bp_lastactive'] * 86400) : 0,
+			'posts' => !empty($modSettings['bp_min_posts']) ? $modSettings['bp_min_posts'] : 0,
 			'minreg' => !empty($modSettings['bp_minregdays']) ? time() - ($modSettings['bp_minregdays'] * 86400) : 0,
 		)
 	);
@@ -90,7 +89,7 @@ function scheduled_birthday_posts()
 
 	// Going to need this to make the post...
 	require_once($sourcedir . '/Subs-Post.php');
-	
+
 	// Load the member data of the poster and construct the array for createPost
 	$poster_id = (isset($modSettings['bp_pid']) ? $modSettings['bp_pid'] : 0);
 	loadMemberData($poster_id, false, 'normal');
@@ -128,7 +127,7 @@ function scheduled_birthday_posts()
 			'smileys_enabled' => true,
 		);
 		createPost ($msgOptions, $topicOptions, $posterOptions);
-		
+
 		// Push it back into an array for later use with PMs
 		foreach($birthdays as $key => $birthday)
 		{
@@ -160,12 +159,12 @@ function scheduled_birthday_posts()
 
 			// Make the darn post already!
 			createPost ($msgOptions, $topicOptions, $posterOptions);
-			
+
 			// Push it back into an array for later use with PMs
 			$birthdays[$key]['topic'] = $topicOptions['id'];
 			$birthdays[$key]['message'] = $msgOptions['id'];
 		}
-	
+
 	}
 
 	// Have they enabled the sending of a notification PM as well?
@@ -175,11 +174,11 @@ function scheduled_birthday_posts()
 		{
 			// Set values for the {membername}, {link} and {forumname} variables
 			$destlink = empty($modSettings['queryless_urls']) ? ($scripturl . '?topic=' . $birthday['topic'] . '.msg' . $birthday['message'] . '#msg' . $birthday['message']) : ($scripturl . '/topic,' . $birthday['topic'] . '.msg' . $birthday['message'] . '.html#msg' . $birthday['message']);
-			
+
 			$bp_pm_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmsubject']) ? $modSettings['bp_pmsubject'] : $txt['bp_default_pmsubject']);
 			$bp_pm_body = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmbody']) ? $modSettings['bp_pmbody'] : $txt['bp_default_pmbody']);
 			$bp_pm_body = str_replace('{link}', $destlink, $bp_pm_body);
-			
+
 			$bp_pm_subject = str_replace('{forumname}', $context['forum_name'], $bp_pm_subject);
 			$bp_pm_body = str_replace('{forumname}', $context['forum_name'], $bp_pm_body);
 
@@ -195,7 +194,7 @@ function scheduled_birthday_posts()
 			);
 			$pm_subject = $bp_pm_subject;
 			$pm_body = $bp_pm_body;
-			
+
 			// Create the PM!
 			sendpm($pm_to, $pm_subject, $pm_body, false, $pm_from);
 		}

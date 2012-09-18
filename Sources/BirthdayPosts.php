@@ -63,6 +63,7 @@ function modify_birthday_post_settings($return_config = false)
 	'',
 		array('int', 'bp_lastactive'),
 		array('int', 'bp_minregdays'),
+		array('int', 'bp_min_posts'),
 	);
 
 	if ($return_config)

@@ -33,10 +33,9 @@
 		'integrate_admin_include' => '$sourcedir/BirthdayPosts.php',
 		'integrate_admin_areas' => 'birthday_admin_areas',
 		'integrate_modify_modifications' => 'birthday_modify_modifications',
+		'integrate_menu_buttons' => 'birthday_post_copyright',
 	);
 
 	/* Uninstall please */
-	$call = 'remove_integration_function';
-
 	foreach ($hooks as $hook => $function)
-		$call($hook, $function);
+		remove_integration_function($hook, $function);

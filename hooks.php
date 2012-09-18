@@ -30,12 +30,11 @@
 
 	/* Everybody likes hooks */
 	$hooks = array(
-		'integrate_admin_include' => '$sourcedir/BirthdayPosts.php',
+		'integrate_pre_include' => '$sourcedir/BirthdayPosts.php',
 		'integrate_admin_areas' => 'birthday_admin_areas',
 		'integrate_modify_modifications' => 'birthday_modify_modifications',
+		'integrate_menu_buttons' => 'birthday_post_copyright',
 	);
 
-	$call = 'add_integration_function';
-
 	foreach ($hooks as $hook => $function)
-		$call($hook, $function);
+		add_integration_function($hook, $function);

@@ -89,3 +89,11 @@ function modify_birthday_post_settings($return_config = false)
 	}
 	prepareDBSettingContext($config_vars);
 }
+
+function birthday_post_copyright()
+{
+    global $context;
+
+     if ($context['current_action'] == 'credits')
+        $context['copyrights']['mods'][] = '<a href="http://missallsunday.com" title="Free SMF Mods">Birthday Posts mod &copy Suki</a>';
+}

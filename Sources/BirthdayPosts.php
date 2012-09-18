@@ -38,11 +38,11 @@ function birthday_modify_modifications(&$sub_actions)
 {
 	global $context;
 
-	$sub_actions['birthday'] = 'list_integration_birthday';
+	$sub_actions['birthday'] = 'modify_birthday_post_settings';
 	$context[$context['admin_menu_name']]['tab_data']['tabs']['birthday'] = array();
 }
 
-function ModifyBirthdayPostSettings($return_config = false)
+function modify_birthday_post_settings($return_config = false)
 {
 	global $context, $scripturl, $txt;
 

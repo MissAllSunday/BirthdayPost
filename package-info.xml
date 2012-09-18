@@ -20,12 +20,14 @@
 	<install for="2.0 - 2.0.99">
 		<redirect url="?action=admin;area=modsettings;sa=birthday">redirect.txt</redirect>
 		<readme type="file" parsebbc="true">readme_smf.txt</readme>
+		<code>hooks.php</code>
 		<database>install.php</database><!-- this will be picked up on uninstall too if the user asks -->
 		<modification type="file" format="xml">install.xml</modification>
 	</install>
 
 	<uninstall for="2.0 - 2.0.99">
-		<code>uninstall.php</code><!-- this MUST be uninstalled -->
+		<database>uninstall.php</database><!-- this MUST be uninstalled -->
+		<code>remove.php</code>
 		<modification type="file" format="xml" reverse="true">install.xml</modification>
 	</uninstall>
 

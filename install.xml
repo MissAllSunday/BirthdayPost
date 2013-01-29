@@ -8,7 +8,7 @@
 		<operation>
 			<search position="end" />
 			<add><![CDATA[
-// Post a topic when someone has a birfday :P
+// Post a topic when someone has a birthday :P
 function scheduled_birthday_posts()
 {
 	global $modSettings, $sourcedir, $mbname, $txt, $smcFunc, $scripturl, $user_profile, $context;

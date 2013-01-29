@@ -51,9 +51,11 @@ function scheduled_birthday_posts()
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE bp_lastpost < {int:lastpost}
-					AND notify_announcements = {int:notify_announcements}' . (!empty($modSettings['bp_lastactive']) ? '
-			AND last_login > {int:last_login}' : '') . (!empty($modSettings['bp_min_posts']) ? '
-			AND posts >= {int:posts}' : '') . (!empty($modSettings['bp_minregdays']) ? '
+			AND MONTH(birthdate) = {int:month}
+			AND DAYOFMONTH(birthdate) = {int:day}
+			AND birthdate > {string:nondate}
+			AND notify_announcements = {int:notify_announcements}' . (!empty($modSettings['bp_lastactive']) ? '
+			AND last_login > {int:last_login}' : '') . (!empty($modSettings['bp_minregdays']) ? '
 			AND date_registered < {int:minreg}' : '') . (empty($modSettings['bp_banned']) ? '
 			AND is_activated >= 1 AND is_activated <= 10' : '
 			AND is_activated >= 1'),
@@ -65,7 +67,6 @@ function scheduled_birthday_posts()
 			'month' => $month,
 			'day' => $day,
 			'last_login' => !empty($modSettings['bp_lastactive']) ? time() - ($modSettings['bp_lastactive'] * 86400) : 0,
-			'posts' => !empty($modSettings['bp_min_posts']) ? $modSettings['bp_min_posts'] : 0,
 			'minreg' => !empty($modSettings['bp_minregdays']) ? time() - ($modSettings['bp_minregdays'] * 86400) : 0,
 		)
 	);

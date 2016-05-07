@@ -186,7 +186,7 @@ class BirthdayPosts extends Suki\Ohara
 		loadMemberData($poster_id, false, 'normal');
 		$posterOptions = array(
 			'id' => (isset($modSettings['bp_pid']) ? $modSettings['bp_pid'] : 0),
-			'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $txt['bp_title']),
+			'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $txt['BirthdayPosts_title']),
 			'update_post_count'	=> (!empty($modSettings['bp_increase_pc']) && isset($modSettings['bp_pid']) ? 1 : 0),
 			'email' => (isset($user_info['email']) ? $user_info['email'] : ''),
 			'ip' => '0.0.0.0',
@@ -202,8 +202,8 @@ class BirthdayPosts extends Suki\Ohara
 				$birthday_links[] = '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]';
 			}
 
-			$bp_post_subject = str_replace('{membername}', implode(', ', $birthday_names), !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['bp_default_subject']);
-			$bp_post_body = str_replace('{membername}', implode(', ', $birthday_links), !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['bp_default_body']);
+			$bp_post_subject = str_replace('{membername}', implode(', ', $birthday_names), !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
+			$bp_post_body = str_replace('{membername}', implode(', ', $birthday_links), !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
 
 			// Finally, set up the post and make it!
 			$topicOptions = array(
@@ -230,8 +230,8 @@ class BirthdayPosts extends Suki\Ohara
 		{
 			foreach($birthdays as $key => $birthday)
 			{
-				$bp_post_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['bp_default_subject']);
-				$bp_post_body = str_replace('{membername}', '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]', !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['bp_default_body']);
+				$bp_post_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
+				$bp_post_body = str_replace('{membername}', '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]', !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
 
 				//  Options needed for our post.
 				// Options for the topic itself
@@ -266,8 +266,8 @@ class BirthdayPosts extends Suki\Ohara
 				// Set values for the {membername}, {link} and {forumname} variables
 				$destlink = empty($modSettings['queryless_urls']) ? ($scripturl . '?topic=' . $birthday['topic'] . '.msg' . $birthday['message'] . '#msg' . $birthday['message']) : ($scripturl . '/topic,' . $birthday['topic'] . '.msg' . $birthday['message'] . '.html#msg' . $birthday['message']);
 
-				$bp_pm_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmsubject']) ? $modSettings['bp_pmsubject'] : $txt['bp_default_pmsubject']);
-				$bp_pm_body = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmbody']) ? $modSettings['bp_pmbody'] : $txt['bp_default_pmbody']);
+				$bp_pm_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmsubject']) ? $modSettings['bp_pmsubject'] : $txt['BirthdayPosts_default_pmsubject']);
+				$bp_pm_body = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmbody']) ? $modSettings['bp_pmbody'] : $txt['BirthdayPosts_default_pmbody']);
 				$bp_pm_body = str_replace('{link}', $destlink, $bp_pm_body);
 
 				$bp_pm_subject = str_replace('{forumname}', $context['forum_name'], $bp_pm_subject);
@@ -280,8 +280,8 @@ class BirthdayPosts extends Suki\Ohara
 				);
 				$pm_from = array(
 					'id' => (isset($modSettings['bp_pid']) ? $modSettings['bp_pid'] : 0),
-					'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $txt['bp_title']),
-					'username' => (isset($user_profile[$poster_id]['member_name']) ? $user_profile[$poster_id]['member_name'] : $txt['bp_title']),
+					'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $txt['BirthdayPosts_title']),
+					'username' => (isset($user_profile[$poster_id]['member_name']) ? $user_profile[$poster_id]['member_name'] : $txt['BirthdayPosts_title']),
 				);
 				$pm_subject = $bp_pm_subject;
 				$pm_body = $bp_pm_body;

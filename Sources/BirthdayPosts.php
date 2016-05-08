@@ -101,7 +101,7 @@ class BirthdayPosts extends Suki\Ohara
 
 	public function scheduledTask()
 	{
-		global $modSettings, $sourcedir, $mbname, $txt, $smcFunc, $scripturl, $user_profile, $context;
+		global $mbname, $smcFunc, $user_profile, $context;
 
 		// Load the language files
 		loadEssentialThemeData();
@@ -109,32 +109,32 @@ class BirthdayPosts extends Suki\Ohara
 		// Get the date
 		$month = date('n'); // Month without leading zeros.
 		$day = date('j'); // Day without leading zeros.
+		$reuseTopic = 1:
 
 		// Are we reusing an existing topic, if so - does it exist and does it match the board id specified?
 		// If no to any of these, force new topic posting.
 
-		if(!empty($modSettings['bp_reusetopic']))
+		if($this->setting('reusetopic'))
 		{
-			$modSettings['bp_reusetopic'] = (int) $modSettings['bp_reusetopic'];
 			$result = $smcFunc['db_query']('', '
 				SELECT id_topic, id_board
 				FROM {db_prefix}topics
 				WHERE id_topic = {int:topic}
 					AND id_board = {int:board}',
 				array(
-					'topic' => $modSettings['bp_reusetopic'],
-					'board' => !empty($modSettings['bp_board']) ? (int) $modSettings['bp_board'] : 1,
+					'topic' => $this->setting('reusetopic'),
+					'board' => $this->setting('board') ? (int) $this->setting('board') : 1,
 				)
 			);
 
 			// If we find no rows, either topic doesn't exist, or it's not in the right board - so force regular handling, i.e. new topic.
 			if (!$smcFunc['db_num_rows']($result))
-				$modSettings['bp_reusetopic'] = 0;
+				$reuseTopic = 0;
 
 			$smcFunc['db_free_result']($result);
 		}
 		else
-			$modSettings['bp_reusetopic'] = 0;
+			$reuseTopic = 0;
 
 		// So who are the lucky ones?
 		$result = $smcFunc['db_query']('', '
@@ -144,9 +144,9 @@ class BirthdayPosts extends Suki\Ohara
 				AND MONTH(birthdate) = {int:month}
 				AND DAYOFMONTH(birthdate) = {int:day}
 				AND birthdate > {string:nondate}
-				AND notify_announcements = {int:notify_announcements}' . (!empty($modSettings['bp_lastactive']) ? '
-				AND last_login > {int:last_login}' : '') . (!empty($modSettings['bp_minregdays']) ? '
-				AND date_registered < {int:minreg}' : '') . (empty($modSettings['bp_banned']) ? '
+				AND notify_announcements = {int:notify_announcements}' . ($this->setting('lastactive') ? '
+				AND last_login > {int:last_login}' : '') . ($this->setting('minregdays') ? '
+				AND date_registered < {int:minreg}' : '') . ($this->setting('banned') ? '
 				AND is_activated >= 1 AND is_activated <= 10' : '
 				AND is_activated >= 1'),
 			array(
@@ -156,8 +156,8 @@ class BirthdayPosts extends Suki\Ohara
 				'year' => 1,
 				'month' => $month,
 				'day' => $day,
-				'last_login' => !empty($modSettings['bp_lastactive']) ? time() - ($modSettings['bp_lastactive'] * 86400) : 0,
-				'minreg' => !empty($modSettings['bp_minregdays']) ? time() - ($modSettings['bp_minregdays'] * 86400) : 0,
+				'last_login' => $this->setting('lastactive') ? time() - ($this->setting('lastactive') * 86400) : 0,
+				'minreg' => $this->setting('minregdays') ? time() - ($this->setting('minregdays') * 86400) : 0,
 			)
 		);
 
@@ -182,28 +182,31 @@ class BirthdayPosts extends Suki\Ohara
 		require_once($sourcedir . '/Subs-Post.php');
 
 		// Load the member data of the poster and construct the array for createPost
-		$poster_id = (isset($modSettings['bp_pid']) ? $modSettings['bp_pid'] : 0);
-		loadMemberData($poster_id, false, 'normal');
+		$posterId = ($this->setting('pid') ? $modSettings['bp_pid'] : 0);
+
+		loadMemberData($posterId, false, 'normal');
+
 		$posterOptions = array(
-			'id' => (isset($modSettings['bp_pid']) ? $modSettings['bp_pid'] : 0),
-			'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $txt['BirthdayPosts_title']),
-			'update_post_count'	=> (!empty($modSettings['bp_increase_pc']) && isset($modSettings['bp_pid']) ? 1 : 0),
+			'id' => $posterId,
+			'name' => (isset($user_profile[$posterId]['real_name']) ? $user_profile[$posterId]['real_name'] : $this->text('title')),
+			'update_post_count'	=> ($this->setting('increase_pc') && !empty($posterId) ? 1 : 0),
 			'email' => (isset($user_info['email']) ? $user_info['email'] : ''),
 			'ip' => '0.0.0.0',
 		);
 
 		// Are we doing one post for all birthdays, or one post per birthday?
-		if (!empty($modSettings['bp_postperday']))
+		if ($this->setting('postperday'))
 		{
-			$birthday_names = array();
+			$birthdayNames = array();
 			foreach($birthdays as $birthday)
 			{
-				$birthday_names[] = $birthday['name'];
-				$birthday_links[] = '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]';
+				$birthdayNames[] = $birthday['name'];
+				$birthdayLinks[] = '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]';
 			}
 
-			$bp_post_subject = str_replace('{membername}', implode(', ', $birthday_names), !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
-			$bp_post_body = str_replace('{membername}', implode(', ', $birthday_links), !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
+			$postSubject = $this->parser('{membername}', implode(', ', $birthdayNames), !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
+
+			$postBody = str_replace('{membername}', implode(', ', $birthdayLinks), !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
 
 			// Finally, set up the post and make it!
 			$topicOptions = array(
@@ -213,8 +216,8 @@ class BirthdayPosts extends Suki\Ohara
 			);
 			$msgOptions = array(
 				'id' => 0,
-				'subject' => $bp_post_subject,
-				'body' => htmlspecialchars($bp_post_body),
+				'subject' => $postSubject,
+				'body' => htmlspecialchars($postBody),
 				'smileys_enabled' => true,
 			);
 			createPost ($msgOptions, $topicOptions, $posterOptions);
@@ -230,8 +233,8 @@ class BirthdayPosts extends Suki\Ohara
 		{
 			foreach($birthdays as $key => $birthday)
 			{
-				$bp_post_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
-				$bp_post_body = str_replace('{membername}', '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]', !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
+				$postSubject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
+				$postBody = str_replace('{membername}', '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]', !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
 
 				//  Options needed for our post.
 				// Options for the topic itself
@@ -243,8 +246,8 @@ class BirthdayPosts extends Suki\Ohara
 				// Message options!
 				$msgOptions = array(
 					'id' => 0,
-					'subject' => $bp_post_subject,
-					'body' => htmlspecialchars($bp_post_body),
+					'subject' => $postSubject,
+					'body' => htmlspecialchars($postBody),
 					'smileys_enabled' => true,
 				);
 

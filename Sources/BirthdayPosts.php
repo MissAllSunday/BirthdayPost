@@ -114,7 +114,7 @@ class BirthdayPosts extends Suki\Ohara
 		// Are we reusing an existing topic, if so - does it exist and does it match the board id specified?
 		// If no to any of these, force new topic posting.
 
-		if($this->setting('reusetopic'))
+		if($reuseTopic)
 		{
 			$result = $smcFunc['db_query']('', '
 				SELECT id_topic, id_board
@@ -133,9 +133,6 @@ class BirthdayPosts extends Suki\Ohara
 
 			$smcFunc['db_free_result']($result);
 		}
-
-		else
-			$reuseTopic = 0;
 
 		// So who are the lucky ones?
 		$result = $smcFunc['db_query']('', '

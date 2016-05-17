@@ -56,23 +56,23 @@ class BirthdayPosts extends Suki\Ohara
 		global $context;
 
 		$config_vars = array(
-			array('desc', $this->name .'_admin_desc', 'subtext' => $this->text('_sub')),
-			array('int', $this->name .'_board', 'subtext' => $this->text('_sub')),
-			array('int', $this->name .'_reusetopic', 'subtext' => $this->text('_sub')),
-			array('int', $this->name .'_pid', 'subtext' => $this->text('_sub')),
-			array('check', $this->name .'_increase_pc', 'subtext' => $this->text('_sub')),
-			array('text', $this->name .'_psubject', 'subtext' => $this->text('_sub')),
-			array('large_text', $this->name .'_pbody', 'subtext' => $this->text('_sub')),
-			array('check', $this->name .'_postperday', 'subtext' => $this->text('_sub')),
-			array('check', $this->name .'_banned', 'subtext' => $this->text('_sub')),
+			array('desc', $this->name .'_admin_desc'),
+			array('int', $this->name .'_board', 'subtext' => $this->text('board_sub')),
+			array('int', $this->name .'_reusetopic', 'subtext' => $this->text('reusetopic_sub')),
+			array('int', $this->name .'_pid', 'subtext' => $this->text('pid_sub')),
+			array('check', $this->name .'_increase_pc'),
+			array('text', $this->name .'_psubject', 'subtext' => $this->text('psubject_sub')),
+			array('large_text', $this->name .'_pbody', 'subtext' => $this->text('pbody_sub')),
+			array('check', $this->name .'_postperday', 'subtext' => $this->text('postperday_sub')),
+			array('check', $this->name .'_banned'),
 		'',
-			array('check', $this->name .'_send_pm', 'subtext' => $this->text('_sub')),
-			array('text', $this->name .'_pmsubject', 'subtext' => $this->text('_sub')),
-			array('large_text', $this->name .'_pmbody', 'subtext' => $this->text('_sub')),
+			array('check', $this->name .'_send_pm'),
+			array('text', $this->name .'_pmsubject', 'subtext' => $this->text('pmsubject_sub')),
+			array('large_text', $this->name .'_pmbody', 'subtext' => $this->text('pmbody_sub')),
 		'',
-			array('int', $this->name .'_lastactive', 'subtext' => $this->text('_sub')),
-			array('int', $this->name .'_minregdays', 'subtext' => $this->text('_sub')),
-			array('int', $this->name .'_min_posts', 'subtext' => $this->text('_sub')),
+			array('int', $this->name .'_lastactive', 'subtext' => $this->text('lastactive_sub')),
+			array('int', $this->name .'_minregdays', 'subtext' => $this->text('minregdays_sub')),
+			array('int', $this->name .'_min_posts'),
 		);
 
 		if ($return_config)
@@ -89,7 +89,7 @@ class BirthdayPosts extends Suki\Ohara
 			return prepareDBSettingContext($config_vars);
 		}
 
-		if (isset($_GET['save']))
+		if ($this->validate('save'))
 		{
 			checkSession();
 			$save_vars = $config_vars;

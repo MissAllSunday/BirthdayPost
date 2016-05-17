@@ -20,7 +20,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 		<require-dir name="Sources/ohara" destination="$sourcedir">Source library</require-dir>
 		<require-file name="Sources/BirthdayPosts.php" destination="$sourcedir">The file that handles everything</require-file>
 		<database>install.php</database>
-		<modification type="file" format="xml">install.xml</modification>
 		<require-dir name="Themes" destination="$boarddir">Source files</require-dir>
 		<require-file name="_configBirthdayPosts.json" destination="$boarddir">json config file</require-file>
 		<redirect url="?action=admin;area=modsettings;sa=BirthdayPosts"></redirect>
@@ -29,7 +28,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 	<uninstall for="2.0 - 2.0.99">
 		<code>uninstall.php</code><!-- this MUST be uninstalled -->
 		<hook function="BirthdayPosts::runTimeHooks" hook="integrate_load_theme" file="$sourcedir/BirthdayPosts.php" object="true" reverse="true"></hook>
-		<modification type="file" format="xml" reverse="true">install.xml</modification>
 		<remove-file name="$sourcedir/BirthdayPosts.php" />
 		<remove-file name="$languagedir/BirthdayPosts.english.php" />
 		<remove-file name="$languagedir/BirthdayPosts.english-utf8.php" />

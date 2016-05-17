@@ -38,16 +38,16 @@ class BirthdayPosts extends Suki\Ohara
 		$this->setRegistry();
 	}
 
-	public function adminArea(&$areas)
+	public function addAdminArea(&$areas)
 	{
 		$areas['config']['areas']['modsettings']['subsections'][$this->name] = array($this->text('title'));
 	}
 
-	public function settingsTab(&$sub_actions)
+	public function addSettingsTab(&$subActions)
 	{
 		global $context;
 
-		$sub_actions['birthday'] = $this->settingsPage();
+		$subActions[$this->name] = array($this, 'settingsPage');
 		$context[$context['admin_menu_name']]['tab_data']['tabs'][$this->name] = array();
 	}
 
@@ -94,7 +94,7 @@ class BirthdayPosts extends Suki\Ohara
 			checkSession();
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
-			redirectexit('action=admin;area=modsettings;sa=birthday');
+			redirectexit('action=admin;area=modsettings;sa='. $this->name);
 		}
 		prepareDBSettingContext($config_vars);
 	}
@@ -109,7 +109,7 @@ class BirthdayPosts extends Suki\Ohara
 		// Get the date
 		$month = date('n'); // Month without leading zeros.
 		$day = date('j'); // Day without leading zeros.
-		$reuseTopic = $this->setting('reusetopic'):
+		$reuseTopic = $this->setting('reusetopic');
 
 		// Are we reusing an existing topic, if so - does it exist and does it match the board id specified?
 		// If no to any of these, force new topic posting.

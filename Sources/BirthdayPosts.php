@@ -109,7 +109,7 @@ class BirthdayPosts extends Suki\Ohara
 		// Get the date
 		$month = date('n'); // Month without leading zeros.
 		$day = date('j'); // Day without leading zeros.
-		$reuseTopic = 1:
+		$reuseTopic = $this->setting('reusetopic'):
 
 		// Are we reusing an existing topic, if so - does it exist and does it match the board id specified?
 		// If no to any of these, force new topic posting.
@@ -122,7 +122,7 @@ class BirthdayPosts extends Suki\Ohara
 				WHERE id_topic = {int:topic}
 					AND id_board = {int:board}',
 				array(
-					'topic' => $this->setting('reusetopic'),
+					'topic' => $reuseTopic,
 					'board' => $this->setting('board') ? (int) $this->setting('board') : 1,
 				)
 			);
@@ -133,6 +133,7 @@ class BirthdayPosts extends Suki\Ohara
 
 			$smcFunc['db_free_result']($result);
 		}
+
 		else
 			$reuseTopic = 0;
 
@@ -194,6 +195,11 @@ class BirthdayPosts extends Suki\Ohara
 			'ip' => '0.0.0.0',
 		);
 
+		// Default vars.
+		$postSubject = $this->setting('psubject') ? $this->setting('psubject') : $this->text('default_subject');
+		$postBody = $this->setting('pbody') ? $this->setting('pbody') : $this->text('default_body');
+		$postBoard = $this->setting('board') ? $this->setting('board') : 1;
+
 		// Are we doing one post for all birthdays, or one post per birthday?
 		if ($this->setting('postperday'))
 		{
@@ -201,23 +207,27 @@ class BirthdayPosts extends Suki\Ohara
 			foreach($birthdays as $birthday)
 			{
 				$birthdayNames[] = $birthday['name'];
-				$birthdayLinks[] = '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]';
+				$birthdayLinks[] = '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]';
 			}
 
-			$postSubject = $this->parser('{membername}', implode(', ', $birthdayNames), !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
+			$postSubject = $this->parser($postSubject, array(
+				'{membername}' => implode(', ', $birthdayNames)
+			));
 
-			$postBody = str_replace('{membername}', implode(', ', $birthdayLinks), !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
+			$postBody = $this->parser($postBody, array(
+				'{membername}' => implode(', ', $birthdayLinks)
+			));
 
 			// Finally, set up the post and make it!
 			$topicOptions = array(
-				'board'		=> (isset($modSettings['bp_board']) ? $modSettings['bp_board'] : 1),
-				'mark_as_read'	=> false,
-				'id' => $modSettings['bp_reusetopic'],
+				'board' => $postBoard,
+				'mark_as_read' => false,
+				'id' => $reuseTopic,
 			);
 			$msgOptions = array(
 				'id' => 0,
-				'subject' => $postSubject,
-				'body' => htmlspecialchars($postBody),
+				'subject' => $this->sanitize($postSubject),
+				'body' => $this->sanitize($postBody),
 				'smileys_enabled' => true,
 			);
 			createPost ($msgOptions, $topicOptions, $posterOptions);
@@ -229,25 +239,31 @@ class BirthdayPosts extends Suki\Ohara
 				$birthdays[$key]['message'] = $msgOptions['id'];
 			}
 		}
+
 		else
 		{
 			foreach($birthdays as $key => $birthday)
 			{
-				$postSubject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_psubject']) ? $modSettings['bp_psubject'] : $txt['BirthdayPosts_default_subject']);
-				$postBody = str_replace('{membername}', '[url=' . $scripturl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]', !empty($modSettings['bp_pbody']) ? $modSettings['bp_pbody'] : $txt['BirthdayPosts_default_body']);
+				$postSubject = $this->parser($postSubject, array(
+					'{membername}' => $birthday['name']
+				));
 
-				//  Options needed for our post.
+				$postBody = $this->parser($postBody, array(
+					'{membername}' => implode(', ', '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]')
+				));
+
+				// Options needed for our post.
 				// Options for the topic itself
 				$topicOptions = array(
-					'board'		=> (isset($modSettings['bp_board']) ? $modSettings['bp_board'] : 1),
-					'mark_as_read'	=> false,
-					'id' => $modSettings['bp_reusetopic'],
+					'board' => $postBoard,
+					'mark_as_read' => false,
+					'id' => $reuseTopic,
 				);
 				// Message options!
 				$msgOptions = array(
 					'id' => 0,
-					'subject' => $postSubject,
-					'body' => htmlspecialchars($postBody),
+					'subject' => $this->sanitize($postSubject),
+					'body' => $this->sanitize($postBody),
 					'smileys_enabled' => true,
 				);
 
@@ -258,7 +274,6 @@ class BirthdayPosts extends Suki\Ohara
 				$birthdays[$key]['topic'] = $topicOptions['id'];
 				$birthdays[$key]['message'] = $msgOptions['id'];
 			}
-
 		}
 
 		// Have they enabled the sending of a notification PM as well?
@@ -267,7 +282,7 @@ class BirthdayPosts extends Suki\Ohara
 			foreach($birthdays as $birthday)
 			{
 				// Set values for the {membername}, {link} and {forumname} variables
-				$destlink = empty($modSettings['queryless_urls']) ? ($scripturl . '?topic=' . $birthday['topic'] . '.msg' . $birthday['message'] . '#msg' . $birthday['message']) : ($scripturl . '/topic,' . $birthday['topic'] . '.msg' . $birthday['message'] . '.html#msg' . $birthday['message']);
+				$destlink = empty($modSettings['queryless_urls']) ? ($this->scriptUrl . '?topic=' . $birthday['topic'] . '.msg' . $birthday['message'] . '#msg' . $birthday['message']) : ($this->scriptUrl . '/topic,' . $birthday['topic'] . '.msg' . $birthday['message'] . '.html#msg' . $birthday['message']);
 
 				$bp_pm_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmsubject']) ? $modSettings['bp_pmsubject'] : $txt['BirthdayPosts_default_pmsubject']);
 				$bp_pm_body = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmbody']) ? $modSettings['bp_pmbody'] : $txt['BirthdayPosts_default_pmbody']);

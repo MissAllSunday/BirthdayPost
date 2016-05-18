@@ -142,7 +142,7 @@ class BirthdayPosts extends Suki\Ohara
 				AND MONTH(birthdate) = {int:month}
 				AND DAYOFMONTH(birthdate) = {int:day}
 				AND birthdate > {string:nondate}
-				AND notify_announcements = {int:notify_announcements}' . ($this->setting('lastactive') ? '
+				' . ($this->setting('lastactive') ? '
 				AND last_login > {int:last_login}' : '') . ($this->setting('minregdays') ? '
 				AND date_registered < {int:minreg}' : '') . ($this->setting('banned') ? '
 				AND is_activated >= 1 AND is_activated <= 10' : '
@@ -177,10 +177,10 @@ class BirthdayPosts extends Suki\Ohara
 		// Now we know there are... let's get everything set up.
 
 		// Going to need this to make the post...
-		require_once($sourcedir . '/Subs-Post.php');
+		require_once($this->sourceDir . '/Subs-Post.php');
 
 		// Load the member data of the poster and construct the array for createPost
-		$posterId = ($this->setting('pid') ? $modSettings['bp_pid'] : 0);
+		$posterId = ($this->setting('pid') ? $this->setting('pid') : 0);
 
 		loadMemberData($posterId, false, 'normal');
 
@@ -208,11 +208,11 @@ class BirthdayPosts extends Suki\Ohara
 			}
 
 			$postSubject = $this->parser($postSubject, array(
-				'{membername}' => implode(', ', $birthdayNames)
+				'membername' => implode(', ', $birthdayNames)
 			));
 
 			$postBody = $this->parser($postBody, array(
-				'{membername}' => implode(', ', $birthdayLinks)
+				'membername' => implode(', ', $birthdayLinks)
 			));
 
 			// Finally, set up the post and make it!
@@ -242,11 +242,11 @@ class BirthdayPosts extends Suki\Ohara
 			foreach($birthdays as $key => $birthday)
 			{
 				$postSubject = $this->parser($postSubject, array(
-					'{membername}' => $birthday['name']
+					'membername' => $birthday['name']
 				));
 
 				$postBody = $this->parser($postBody, array(
-					'{membername}' => implode(', ', '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]')
+					'membername' => implode(', ', '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]')
 				));
 
 				// Options needed for our post.
@@ -279,14 +279,18 @@ class BirthdayPosts extends Suki\Ohara
 			foreach($birthdays as $birthday)
 			{
 				// Set values for the {membername}, {link} and {forumname} variables
-				$destlink = empty($modSettings['queryless_urls']) ? ($this->scriptUrl . '?topic=' . $birthday['topic'] . '.msg' . $birthday['message'] . '#msg' . $birthday['message']) : ($this->scriptUrl . '/topic,' . $birthday['topic'] . '.msg' . $birthday['message'] . '.html#msg' . $birthday['message']);
+				$destlink = !$this->modSetting('queryless_urls') ? ($this->scriptUrl . '?topic=' . $birthday['topic'] . '.msg' . $birthday['message'] . '#msg' . $birthday['message']) : ($this->scriptUrl . '/topic,' . $birthday['topic'] . '.msg' . $birthday['message'] . '.html#msg' . $birthday['message']);
 
-				$bp_pm_subject = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmsubject']) ? $modSettings['bp_pmsubject'] : $txt['BirthdayPosts_default_pmsubject']);
-				$bp_pm_body = str_replace('{membername}', $birthday['name'], !empty($modSettings['bp_pmbody']) ? $modSettings['bp_pmbody'] : $txt['BirthdayPosts_default_pmbody']);
-				$bp_pm_body = str_replace('{link}', $destlink, $bp_pm_body);
+				$bp_pm_subject = $this->parser($this->setting('pmsubject') ? $this->setting('pmsubject') : $this->text('default_pmsubject'), array(
+					'membername' => $birthday['name'],
+					'forumname' => $context['forum_name'],
+				));
 
-				$bp_pm_subject = str_replace('{forumname}', $context['forum_name'], $bp_pm_subject);
-				$bp_pm_body = str_replace('{forumname}', $context['forum_name'], $bp_pm_body);
+				$bp_pm_body = $this->parser($this->setting('pmbody') ? $this->setting('pmbody') : $this->text('default_pmbody'), array(
+					'membername' => $birthday['name'],
+					'link' => $destlink,
+					'forumname' => $context['forum_name'],
+				));
 
 				// Options needed for the PM
 				$pm_to = array(
@@ -294,9 +298,9 @@ class BirthdayPosts extends Suki\Ohara
 					'bcc' => array(),
 				);
 				$pm_from = array(
-					'id' => (isset($modSettings['bp_pid']) ? $modSettings['bp_pid'] : 0),
-					'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $txt['BirthdayPosts_title']),
-					'username' => (isset($user_profile[$poster_id]['member_name']) ? $user_profile[$poster_id]['member_name'] : $txt['BirthdayPosts_title']),
+					'id' => $posterId,
+					'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $this->text('title')),
+					'username' => (isset($user_profile[$poster_id]['member_name']) ? $user_profile[$poster_id]['member_name'] : $this->text('title')),
 				);
 				$pm_subject = $bp_pm_subject;
 				$pm_body = $bp_pm_body;

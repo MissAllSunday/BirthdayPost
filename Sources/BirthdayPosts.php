@@ -101,7 +101,7 @@ class BirthdayPosts extends Suki\Ohara
 
 	public function scheduledTask()
 	{
-		global $mbname, $smcFunc, $user_profile, $context;
+		global $smcFunc, $user_profile, $context;
 
 		// Load the language files
 		loadEssentialThemeData();
@@ -246,7 +246,7 @@ class BirthdayPosts extends Suki\Ohara
 				));
 
 				$postBody = $this->parser($postBody, array(
-					'membername' => implode(', ', '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]')
+					'membername' => '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]',
 				));
 
 				// Options needed for our post.
@@ -274,7 +274,7 @@ class BirthdayPosts extends Suki\Ohara
 		}
 
 		// Have they enabled the sending of a notification PM as well?
-		if (!empty($modSettings['bp_send_pm']))
+		if ($this->setting('send_pm'))
 		{
 			foreach($birthdays as $birthday)
 			{
@@ -299,8 +299,8 @@ class BirthdayPosts extends Suki\Ohara
 				);
 				$pm_from = array(
 					'id' => $posterId,
-					'name' => (isset($user_profile[$poster_id]['real_name']) ? $user_profile[$poster_id]['real_name'] : $this->text('title')),
-					'username' => (isset($user_profile[$poster_id]['member_name']) ? $user_profile[$poster_id]['member_name'] : $this->text('title')),
+					'name' => (isset($user_profile[$posterId]['real_name']) ? $user_profile[$posterId]['real_name'] : $this->text('title')),
+					'username' => (isset($user_profile[$posterId]['member_name']) ? $user_profile[$posterId]['member_name'] : $this->text('title')),
 				);
 				$pm_subject = $bp_pm_subject;
 				$pm_body = $bp_pm_body;

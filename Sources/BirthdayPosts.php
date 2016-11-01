@@ -8,25 +8,13 @@
  * @license http://www.mozilla.org/MPL/ MPL 2.0
  */
 
-/*
- * Version: MPL 2.0
- *
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
- * If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- */
-
 if (!defined('SMF'))
 	die('No direct access...');
 
-// Use Ohara! manually :(
-require_once ($sourcedir .'/ohara/src/Suki/Ohara.php');
+// Ohara autoload!
+require_once $sourcedir .'/ohara/src/Suki/autoload.php';
+
+use Suki\Ohara;
 
 class BirthdayPosts extends Suki\Ohara
 {
@@ -89,7 +77,7 @@ class BirthdayPosts extends Suki\Ohara
 			return prepareDBSettingContext($config_vars);
 		}
 
-		if ($this->validate('save'))
+		if ($this['data']->validate('save'))
 		{
 			checkSession();
 			$save_vars = $config_vars;
@@ -109,7 +97,7 @@ class BirthdayPosts extends Suki\Ohara
 		// Get the date
 		$month = date('n'); // Month without leading zeros.
 		$day = date('j'); // Day without leading zeros.
-		$reuseTopic = $this->setting('reusetopic');
+		$reuseTopic = $this->setting('reusetopic', 0);
 
 		// Are we reusing an existing topic, if so - does it exist and does it match the board id specified?
 		// If no to any of these, force new topic posting.
@@ -123,7 +111,7 @@ class BirthdayPosts extends Suki\Ohara
 					AND id_board = {int:board}',
 				array(
 					'topic' => $reuseTopic,
-					'board' => $this->setting('board') ? (int) $this->setting('board') : 1,
+					'board' => $this->setting('board', 1),
 				)
 			);
 
@@ -142,9 +130,9 @@ class BirthdayPosts extends Suki\Ohara
 				AND MONTH(birthdate) = {int:month}
 				AND DAYOFMONTH(birthdate) = {int:day}
 				AND birthdate > {string:nondate}
-				' . ($this->setting('lastactive') ? '
-				AND last_login > {int:last_login}' : '') . ($this->setting('minregdays') ? '
-				AND date_registered < {int:minreg}' : '') . ($this->setting('banned') ? '
+				' . ($this->enable('lastactive') ? '
+				AND last_login > {int:last_login}' : '') . ($this->enable('minregdays') ? '
+				AND date_registered < {int:minreg}' : '') . ($this->enable('banned') ? '
 				AND is_activated >= 1 AND is_activated <= 10' : '
 				AND is_activated >= 1'),
 			array(
@@ -154,8 +142,8 @@ class BirthdayPosts extends Suki\Ohara
 				'year' => 1,
 				'month' => $month,
 				'day' => $day,
-				'last_login' => $this->setting('lastactive') ? time() - ($this->setting('lastactive') * 86400) : 0,
-				'minreg' => $this->setting('minregdays') ? time() - ($this->setting('minregdays') * 86400) : 0,
+				'last_login' => $this->enable('lastactive') ? time() - ($this->setting('lastactive') * 86400) : 0,
+				'minreg' => $this->enable('minregdays') ? time() - ($this->setting('minregdays') * 86400) : 0,
 			)
 		);
 
@@ -180,25 +168,25 @@ class BirthdayPosts extends Suki\Ohara
 		require_once($this->sourceDir . '/Subs-Post.php');
 
 		// Load the member data of the poster and construct the array for createPost
-		$posterId = ($this->setting('pid') ? $this->setting('pid') : 0);
+		$posterId = $this->setting('pid', 0);
 
 		loadMemberData($posterId, false, 'normal');
 
 		$posterOptions = array(
 			'id' => $posterId,
 			'name' => (isset($user_profile[$posterId]['real_name']) ? $user_profile[$posterId]['real_name'] : $this->text('title')),
-			'update_post_count'	=> ($this->setting('increase_pc') && !empty($posterId) ? 1 : 0),
+			'update_post_count'	=> ($this->enable('increase_pc') && !empty($posterId) ? 1 : 0),
 			'email' => (isset($user_info['email']) ? $user_info['email'] : ''),
 			'ip' => '0.0.0.0',
 		);
 
 		// Default vars.
-		$postSubject = $this->setting('psubject') ? $this->setting('psubject') : $this->text('default_subject');
-		$postBody = $this->setting('pbody') ? $this->setting('pbody') : $this->text('default_body');
-		$postBoard = $this->setting('board') ? $this->setting('board') : 1;
+		$postSubject = $this->setting('psubject', $this->text('default_subject'));
+		$postBody = $this->setting('pbody', $this->text('default_body'));
+		$postBoard = $this->setting('board', 1);
 
 		// Are we doing one post for all birthdays, or one post per birthday?
-		if ($this->setting('postperday'))
+		if ($this->enable('postperday'))
 		{
 			$birthdayNames = array();
 			foreach($birthdays as $birthday)
@@ -207,11 +195,11 @@ class BirthdayPosts extends Suki\Ohara
 				$birthdayLinks[] = '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]';
 			}
 
-			$postSubject = $this->parser($postSubject, array(
+			$postSubject = $this['tools']->parser($postSubject, array(
 				'membername' => implode(', ', $birthdayNames)
 			));
 
-			$postBody = $this->parser($postBody, array(
+			$postBody = $this['tools']->parser($postBody, array(
 				'membername' => implode(', ', $birthdayLinks)
 			));
 
@@ -223,8 +211,8 @@ class BirthdayPosts extends Suki\Ohara
 			);
 			$msgOptions = array(
 				'id' => 0,
-				'subject' => $this->sanitize($postSubject),
-				'body' => $this->sanitize($postBody),
+				'subject' => $this['data']->sanitize($postSubject),
+				'body' => $this['data']->sanitize($postBody),
 				'smileys_enabled' => true,
 			);
 			createPost ($msgOptions, $topicOptions, $posterOptions);
@@ -241,11 +229,11 @@ class BirthdayPosts extends Suki\Ohara
 		{
 			foreach($birthdays as $key => $birthday)
 			{
-				$postSubject = $this->parser($postSubject, array(
+				$postSubject = $this['tools']->parser($postSubject, array(
 					'membername' => $birthday['name']
 				));
 
-				$postBody = $this->parser($postBody, array(
+				$postBody = $this['tools']->parser($postBody, array(
 					'membername' => '[url=' . $this->scriptUrl . '?action=profile;u=' . $birthday['id'] . ']' . $birthday['name'] . '[/url]',
 				));
 
@@ -259,8 +247,8 @@ class BirthdayPosts extends Suki\Ohara
 				// Message options!
 				$msgOptions = array(
 					'id' => 0,
-					'subject' => $this->sanitize($postSubject),
-					'body' => $this->sanitize($postBody),
+					'subject' => $this['data']->sanitize($postSubject),
+					'body' => $this['data']->sanitize($postBody),
 					'smileys_enabled' => true,
 				);
 
@@ -281,12 +269,12 @@ class BirthdayPosts extends Suki\Ohara
 				// Set values for the {membername}, {link} and {forumname} variables
 				$destlink = !$this->modSetting('queryless_urls') ? ($this->scriptUrl . '?topic=' . $birthday['topic'] . '.msg' . $birthday['message'] . '#msg' . $birthday['message']) : ($this->scriptUrl . '/topic,' . $birthday['topic'] . '.msg' . $birthday['message'] . '.html#msg' . $birthday['message']);
 
-				$bp_pm_subject = $this->parser($this->setting('pmsubject') ? $this->setting('pmsubject') : $this->text('default_pmsubject'), array(
+				$bp_pm_subject = $this['tools']->parser($this->setting('pmsubject') ? $this->setting('pmsubject') : $this->text('default_pmsubject'), array(
 					'membername' => $birthday['name'],
 					'forumname' => $context['forum_name'],
 				));
 
-				$bp_pm_body = $this->parser($this->setting('pmbody') ? $this->setting('pmbody') : $this->text('default_pmbody'), array(
+				$bp_pm_body = $this['tools']->parser($this->setting('pmbody') ? $this->setting('pmbody') : $this->text('default_pmbody'), array(
 					'membername' => $birthday['name'],
 					'link' => $destlink,
 					'forumname' => $context['forum_name'],

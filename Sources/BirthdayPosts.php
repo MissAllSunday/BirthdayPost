@@ -11,6 +11,9 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+/**
+ * @param array $areas Admin menu array
+ */
 function birthday_admin_areas(&$areas)
 {
 	global $txt;
@@ -20,6 +23,9 @@ function birthday_admin_areas(&$areas)
 	$areas['config']['areas']['modsettings']['subsections']['birthday'] = array($txt['bp_title']);
 }
 
+/**
+ * @param array $sub_actions Admin menu sub actions
+ */
 function birthday_modify_modifications(&$sub_actions)
 {
 	global $context;
@@ -28,6 +34,10 @@ function birthday_modify_modifications(&$sub_actions)
 	$context[$context['admin_menu_name']]['tab_data']['tabs']['birthday'] = array();
 }
 
+/**
+ * @param bool $return_config
+ * @return array
+ */
 function modify_birthday_post_settings($return_config = false)
 {
 	global $context, $scripturl, $txt;
@@ -75,6 +85,9 @@ function modify_birthday_post_settings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
+/**
+ * DUH WINNING!!!
+ */
 function birthday_post_copyright()
 {
     global $context;

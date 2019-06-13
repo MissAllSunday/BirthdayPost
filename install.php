@@ -41,10 +41,9 @@ else
 			'time_unit' => 'string',
 			'disabled' => 'int',
 			'task' => 'string',
-			'callable' => 'string',
 		),
 		array(
-			0, 0, 0, 1, 'd', 1, 'birthday_posts', 'BirthdayPosts.php|BirthdayPosts::scheduledTask#',
+			0, 0, 0, 1, 'd', 1, 'birthday_posts',
 		),
 		array(
 			'id_task',

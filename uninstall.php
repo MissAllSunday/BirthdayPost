@@ -35,7 +35,7 @@ if ($row = $smcFunc['db_fetch_row']($query))
 			'id_task' => $row[0],
 		)
 	);
-
+	
 	// Remove log entries
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_scheduled_tasks
@@ -48,3 +48,4 @@ if ($row = $smcFunc['db_fetch_row']($query))
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete!';
+?>

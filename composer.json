@@ -1,6 +1,0 @@
-{
-	"name": "suki/birthdayposts",
-	"require": {
-		"suki/ohara": "dev-master"
-	}
-}

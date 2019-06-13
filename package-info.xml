@@ -15,7 +15,7 @@
 	<name>Birthday Posts</name>
 	<id>JBlaze:BirthdayPosts</id>
 	<type>modification</type>
-	<version>0.13 Beta</version>
+	<version>1.0</version>
 
 	<install for="2.0 - 2.0.99">
 		<redirect url="?action=admin;area=modsettings;sa=birthday">redirect.txt</redirect>

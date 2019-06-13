@@ -1,13 +1,16 @@
 <?php
-/*******************************************************************
-* install_db.php                                                   *
-********************************************************************
-* For support and license issues, please see this mod's thread:    *
-* http://www.simplemachines.org/community/index.php?topic=328059.0 *
-*******************************************************************/
+
+/**
+ * @package Birthday Posts mod
+ * @version 1.0
+ * @author Suki <suki@missallsunday.com>
+ * @copyright 2012 Suki
+ * @license http://www.mozilla.org/MPL/ MPL 2.0
+ */
 
 if (file_exists(dirname(__FILE__) . '/SSI.php') && !defined('SMF'))
 	require_once(dirname(__FILE__) . '/SSI.php');
+
 else if(!defined('SMF'))
 	die('<b>Error:</b> Cannot install - please verify you put this in the same place as SMF\'s index.php and SSI.php files.');
 

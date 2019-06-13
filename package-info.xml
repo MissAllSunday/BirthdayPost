@@ -5,8 +5,8 @@
 <!--
 /**
  * @package Birthday Posts mod
- * @version 0.13 Beta
- * @author Suki <missallsunday@simplemachines.org>
+ * @version 1.0
+ * @author Suki <suki@missallsunday.com>
  * @copyright 2012 Suki
  * @license http://www.mozilla.org/MPL/ MPL 2.0
  */
@@ -24,7 +24,7 @@
 		<database>install.php</database><!-- this will be picked up on uninstall too if the user asks -->
 		<modification type="file" format="xml">install.xml</modification>
 		<require-dir name="Themes" destination="$boarddir">Source files</require-dir>
-		<require-dir name="Sources" destination="$boarddir">Source files</require-dir>
+		<require-file name="Sources/BirthdayPosts.php" destination="$sourcedir">The file that handles everything</require-file>
 	</install>
 
 	<uninstall for="2.0 - 2.0.99">
@@ -39,9 +39,4 @@
 		<remove-file name="$languagedir/BirthdayPosts.spanish_latin-utf8.php" />
 		<remove-file name="$languagedir/BirthdayPosts.spanish_latin.php" />
 	</uninstall>
-
-	<upgrade from="0.9 Beta - 0.11.2 Beta">
-		<readme type="inline">There is no upgrade for this version. Please remove the older version, then install this version.</readme>
-	</upgrade>
-
 </package-info>

@@ -3,7 +3,7 @@
 /**
  * @package Birthday Posts mod
  * @version 0.13 Beta
- * @author Suki <missallsunday@simplemachines.org>
+ * @author Suki <suki@missallsunday.com>
  * @copyright 2012 Suki
  * @license http://www.mozilla.org/MPL/ MPL 2.0
  */

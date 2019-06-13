@@ -3,7 +3,7 @@
 /**
  * @pac&ntilde;age Birthday Posts mod
  * @version 0.13 Beta
- * @author Su&ntilde;i <missallsunday@simplemachines.org>
+ * @author Su&ntilde;i <suki@missallsunday.com>
  * @copyright 2012 Su&ntilde;i
  * @license http://www.mozilla.org/MPL/ MPL 2.0
  */
